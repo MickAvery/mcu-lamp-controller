@@ -16,6 +16,17 @@
 
 #include "hal.h"
 
+#define I2S_BUFF_SIZE 1U
+
+static uint8_t i2s_buf[I2S_BUFF_SIZE] = {0U}; /* destination buffer for I2S signals */
+
+static const I2SConfig i2s_conf = {
+  NULL, /* tx buffer */
+  i2s_buf, /* rx buffer */
+  I2S_BUFF_SIZE, /* tx+rx buffer size */
+  NULL /* callback */
+};
+
 /*
  * Application entry point.
  */
@@ -40,6 +51,13 @@ int main(void) {
   sdStart(&SD2, NULL);
   palSetPadMode(GPIOA, 2, PAL_MODE_ALTERNATE(7));
   palSetPadMode(GPIOA, 3, PAL_MODE_ALTERNATE(7));
+
+  /*
+   * Activate I2S peripheral
+   */
+  i2sStart(&I2SD2, &i2s_conf);
+  palSetPadMode(GPIOC, 3, PAL_MODE_ALTERNATE(5));
+  palSetPadMode(GPIOB, 10, PAL_MODE_ALTERNATE(5));
 
   /*
    * Normal main() thread activity, in this demo it just performs
